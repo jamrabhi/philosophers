@@ -20,7 +20,16 @@
 # include <stdio.h>
 # include <stdlib.h>
 
-int		parsing(char *argv[]);
+typedef struct s_data
+{
+	int	nb_philo;
+	int	time_die;
+	int	time_eat;
+	int	time_sleep;
+	int	nb_times_must_eat;
+}				t_data;
+
+int		parsing(char *argv[], t_data *data);
 int		exit_fail(char *str);
 
 int		ft_atoi(const char *str);
