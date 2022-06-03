@@ -29,5 +29,7 @@ int	main(int argc, char *argv[])
 		data.time_die);
 	printf("data.time_eat = %d\ndata.time_sleep = %d\n-------\n", data.time_eat,
 		data.time_sleep);
+	if (philo(&data) == EXIT_FAILURE)
+		return (exit_fail("Error : Mutex failed"));
 	return (0);
 }

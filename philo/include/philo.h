@@ -19,6 +19,9 @@
 # include <string.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <pthread.h>
+# include <unistd.h>
+# include <sys/time.h>
 
 typedef struct s_data
 {
@@ -27,6 +30,7 @@ typedef struct s_data
 	int	time_eat;
 	int	time_sleep;
 	int	nb_times_must_eat;
+	pthread_mutex_t mutex;
 }				t_data;
 
 int		parsing(char *argv[], t_data *data);
@@ -34,5 +38,7 @@ int		exit_fail(char *str);
 
 int		ft_atoi(const char *str);
 long	ft_atol(const char *str);
+
+int		philo(t_data *data);
 
 #endif
