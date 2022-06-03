@@ -28,29 +28,13 @@ int		philo(t_data *data)
 	int	i;
 	pthread_t thread[data->nb_philo];
 
-    struct timeval t1, t2;
-    double elapsedTime = 0;
-
-    // start timer
-    gettimeofday(&t1, NULL);
-
-    // do something
-    usleep(100);
-
-
-
 	i = 0;
-
-    // stop timer
-    gettimeofday(&t2, NULL);
-
-    // compute and print the elapsed time in millisec
-    elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
-    elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms
-    printf("%f ms.\n", elapsedTime);
-
-	pthread_mutex_init(&data->mutex, NULL);
-	printf("mutex = %p\n", &data->mutex);
+    gettimeofday(&data->timer_start, NULL);
+	usleep(100 * 10);
+	printf("time : %ld ms.\n", timer(data));
+	if (pthread_mutex_init(&data->mutex, NULL) != 0)
+		return (EXIT_FAILURE);
+	// printf("mutex = %p\n", &data->mutex);
 	while (i < data->nb_philo)
 	{
 		if (pthread_create(&thread[i], NULL, &routine, data) != 0)
@@ -64,7 +48,8 @@ int		philo(t_data *data)
 			return(EXIT_FAILURE);
 		i++;
 	}
-	pthread_mutex_destroy(&data->mutex);
+	if (pthread_mutex_destroy(&data->mutex) != 0)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 

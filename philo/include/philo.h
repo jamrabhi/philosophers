@@ -25,16 +25,18 @@
 
 typedef struct s_data
 {
-	int	nb_philo;
-	int	time_die;
-	int	time_eat;
-	int	time_sleep;
-	int	nb_times_must_eat;
-	pthread_mutex_t mutex;
+	int				nb_philo;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
+	int				nb_times_must_eat;
+	struct timeval	timer_start;
+	pthread_mutex_t	mutex;
 }				t_data;
 
-int		parsing(char *argv[], t_data *data);
 int		exit_fail(char *str);
+int		parsing(char *argv[], t_data *data);
+long	timer(t_data *data);
 
 int		ft_atoi(const char *str);
 long	ft_atol(const char *str);
