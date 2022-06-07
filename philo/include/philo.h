@@ -23,6 +23,15 @@
 # include <unistd.h>
 # include <sys/time.h>
 
+typedef struct s_philo
+{
+	int				id;
+	pthread_t		thread_id;
+	pthread_mutex_t	left_fork;
+	pthread_mutex_t	*right_fork;
+	struct s_data	*data;
+}				t_philo;
+
 typedef struct s_data
 {
 	int				nb_philo;
@@ -32,7 +41,9 @@ typedef struct s_data
 	int				nb_times_must_eat;
 	struct timeval	timer_start;
 	pthread_mutex_t	mutex;
+	t_philo			*philo;
 }				t_data;
+
 
 int		exit_fail(char *str);
 int		parsing(char *argv[], t_data *data);

@@ -25,11 +25,13 @@ int	main(int argc, char *argv[])
 	}
 	if (parsing(argv, &data) == EXIT_FAILURE)
 		return(exit_fail("Error : Arguments are not formatted correctly"));
+	data.philo = malloc(sizeof(t_philo) * data.nb_philo);
 	printf("DATA :\ndata.nb_philo = %d\ndata.time_die = %d\n", data.nb_philo,
 		data.time_die);
 	printf("data.time_eat = %d\ndata.time_sleep = %d\n-------\n", data.time_eat,
 		data.time_sleep);
 	if (philo(&data) == EXIT_FAILURE)
 		return (exit_fail("Error : Mutex failed"));
+	free(data.philo);
 	return (0);
 }
