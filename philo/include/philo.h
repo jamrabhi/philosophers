@@ -48,6 +48,8 @@ typedef struct s_data
 int		exit_fail(char *str);
 int		parsing(char *argv[], t_data *data);
 long	timer(t_data *data);
+void	ft_usleep(long time_ms);
+
 
 int		ft_atoi(const char *str);
 long	ft_atol(const char *str);

@@ -18,14 +18,13 @@ void	*routine(void *mystruct)
 
 	philo = (t_philo *)mystruct;
 	pthread_mutex_lock(&philo->left_fork);
+	printf("%ld %d has taken a fork\n", timer(philo->data), philo->id);
 	pthread_mutex_lock(philo->right_fork);
-	usleep(philo->data->time_eat * 1000);
-	printf("philo [%d] eat\n", philo->id);
+	printf("%ld %d has taken a fork\n", timer(philo->data), philo->id);
+	printf("%ld %d is eating\n", timer(philo->data), philo->id);
+	ft_usleep(philo->data->time_eat);
 	pthread_mutex_unlock(&philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
-	// printf("mutex = %p\n", &philo->data->mutex);
-	// pthread_mutex_unlock(&philo->data->mutex);
-	// printf("test from thread[%d] %ld unlocked\n", philo->id, philo->thread_id);
 	return (NULL);
 }
 
@@ -64,6 +63,7 @@ int		philo(t_data *data)
 	{
 		if (pthread_join(data->philo[i].thread_id, NULL) != 0)
 			return(EXIT_FAILURE);
+		printf("%ld %d is thinking\n", timer(data), i + 1);
 		// printf("thread[%d] = %ld\n", data->philo[i].id, data->philo[i].thread_id);
 		i++;
 	}

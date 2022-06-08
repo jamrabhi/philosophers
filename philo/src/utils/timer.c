@@ -12,6 +12,26 @@
 
 #include <philo.h>
 
+
+long	get_time(void)
+{
+	struct timeval	start_time;
+	long			rt;
+
+	gettimeofday(&start_time, NULL);
+	rt = (start_time.tv_sec * 1000 + start_time.tv_usec / 1000);
+	return (rt);
+}
+
+void	ft_usleep(long time_ms)
+{
+	long	start;
+
+	start = get_time();
+	while ((get_time() - start) < time_ms)
+		usleep(10);
+}
+
 long	timer(t_data *data)
 {
 	struct timeval	end_timer;
