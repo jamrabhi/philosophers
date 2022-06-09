@@ -12,19 +12,38 @@
 
 #include <philo.h>
 
+void	*check_death(void *mystruct)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)mystruct;
+	(void)philo;
+	printf("atec = %ld\n", philo->ate);
+	printf("get_time = %ld\n", get_time());
+	if (get_time() - philo->ate > philo->data->time_die)
+		printf("%ld %d died\n", timer(philo->data), philo->id);
+	return (NULL);
+}
+
 void	*routine(void *mystruct)
 {
 	t_philo *philo;
 
 	philo = (t_philo *)mystruct;
+	pthread_create(&philo->check_death, NULL, &check_death, philo);
 	pthread_mutex_lock(&philo->left_fork);
 	printf("%ld %d has taken a fork\n", timer(philo->data), philo->id);
 	pthread_mutex_lock(philo->right_fork);
 	printf("%ld %d has taken a fork\n", timer(philo->data), philo->id);
 	printf("%ld %d is eating\n", timer(philo->data), philo->id);
-	ft_usleep(philo->data->time_eat);
+	usleep(philo->data->time_eat * 1000);
+	philo->ate = get_time();
 	pthread_mutex_unlock(&philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
+	printf("%ld %d is sleeping\n", timer(philo->data), philo->id);
+	usleep(philo->data->time_sleep * 1000);
+	printf("%ld %d is thinking\n", timer(philo->data), philo->id);
+
 	return (NULL);
 }
 
@@ -34,9 +53,6 @@ int		philo(t_data *data)
 
 	i = 0;
     gettimeofday(&data->timer_start, NULL);
-	// if (pthread_mutex_init(&data->mutex, NULL) != 0)
-	// 	return (EXIT_FAILURE);
-	// printf("mutex = %p\n", &data->mutex);
 	while (i < data->nb_philo)
 	{
 		pthread_mutex_init(&data->philo[i].left_fork, NULL);
@@ -46,6 +62,8 @@ int		philo(t_data *data)
 			data->philo[i].right_fork = &data->philo[i + 1].left_fork;
 		data->philo[i].id = i + 1;
 		data->philo[i].data = data;
+		data->philo[i].ate = get_time();
+		printf("ateeee = %ld\n", data->philo[i].ate);
 		i++;
 	}
 	i = 0;
@@ -67,8 +85,6 @@ int		philo(t_data *data)
 		// printf("thread[%d] = %ld\n", data->philo[i].id, data->philo[i].thread_id);
 		i++;
 	}
-	if (pthread_mutex_destroy(&data->mutex) != 0)
-		return (EXIT_FAILURE);
 	printf("time : %ld ms.\n", timer(data));
 	return (EXIT_SUCCESS);
 }

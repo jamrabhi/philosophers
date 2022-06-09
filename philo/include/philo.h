@@ -26,7 +26,9 @@
 typedef struct s_philo
 {
 	int				id;
+	long			ate;
 	pthread_t		thread_id;
+	pthread_t		check_death;
 	pthread_mutex_t	left_fork;
 	pthread_mutex_t	*right_fork;
 	struct s_data	*data;
@@ -40,6 +42,7 @@ typedef struct s_data
 	int				time_sleep;
 	int				nb_times_must_eat;
 	struct timeval	timer_start;
+	pthread_mutex_t	dead;
 	pthread_mutex_t	mutex;
 	t_philo			*philo;
 }				t_data;
@@ -49,6 +52,7 @@ int		exit_fail(char *str);
 int		parsing(char *argv[], t_data *data);
 long	timer(t_data *data);
 void	ft_usleep(long time_ms);
+long	get_time(void);
 
 
 int		ft_atoi(const char *str);

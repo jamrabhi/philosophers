@@ -32,6 +32,7 @@ int	main(int argc, char *argv[])
 		data.time_sleep);
 	if (philo(&data) == EXIT_FAILURE)
 		return (exit_fail("Error : Mutex failed"));
+	printf("ate = %ld\n", data.philo[0].ate);
 	free(data.philo);
 	return (0);
 }
