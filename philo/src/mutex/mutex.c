@@ -12,17 +12,41 @@
 
 #include <philo.h>
 
+void	print_msg(long ms, int philo_id, char *str, t_data *data)
+{
+	pthread_mutex_lock(&data->msg);
+	pthread_mutex_lock(&data->dead_m);
+	if (!data->dead || (data->dead && !ft_strcmp(str, "died") && data->dead == 1))
+		printf("%ld %d %s\n", ms, philo_id, str);
+	pthread_mutex_unlock(&data->dead_m);
+	pthread_mutex_unlock(&data->msg);
+}
+
 void	*check_death(void *mystruct)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)mystruct;
 	(void)philo;
-	printf("atec = %ld\n", philo->ate);
-	printf("get_time = %ld\n", get_time());
-	if (get_time() - philo->ate > philo->data->time_die)
-		printf("%ld %d died\n", timer(philo->data), philo->id);
+	// printf("atec = %ld\n", philo->ate);
+	// printf("get_time = %ld\n", get_time());
+	if (get_time() - philo->time_ate > philo->data->time_die)
+	{
+		print_msg(timer(philo->data), philo->id, "died", philo->data);
+		philo->data->dead++;
+	}
 	return (NULL);
+}
+
+int		is_dead(t_philo *philo)
+{
+	if ((get_time() - philo->time_ate) >= philo->data->time_die)
+	{
+		philo->data->dead++;
+		print_msg(timer(philo->data), philo->id, "died", philo->data);
+		return (1);
+	}
+	return (0);
 }
 
 void	*routine(void *mystruct)
@@ -30,19 +54,34 @@ void	*routine(void *mystruct)
 	t_philo *philo;
 
 	philo = (t_philo *)mystruct;
-	pthread_create(&philo->check_death, NULL, &check_death, philo);
-	pthread_mutex_lock(&philo->left_fork);
-	printf("%ld %d has taken a fork\n", timer(philo->data), philo->id);
-	pthread_mutex_lock(philo->right_fork);
-	printf("%ld %d has taken a fork\n", timer(philo->data), philo->id);
-	printf("%ld %d is eating\n", timer(philo->data), philo->id);
-	usleep(philo->data->time_eat * 1000);
-	philo->ate = get_time();
-	pthread_mutex_unlock(&philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-	printf("%ld %d is sleeping\n", timer(philo->data), philo->id);
-	usleep(philo->data->time_sleep * 1000);
-	printf("%ld %d is thinking\n", timer(philo->data), philo->id);
+		// printf("nb time must eat = %d\nnb ate = %d\n", philo->data->nb_times_must_eat, philo->nb_ate);
+	while (!is_dead(philo) && !philo->data->dead)
+	{
+		// pthread_create(&philo->check_death, NULL, &check_death, philo);
+		pthread_mutex_lock(&philo->left_fork);
+		print_msg(timer(philo->data), philo->id, "has taken a fork", philo->data);
+		pthread_mutex_lock(philo->right_fork);
+		print_msg(timer(philo->data), philo->id, "has taken a fork", philo->data);
+		print_msg(timer(philo->data), philo->id, "is eating", philo->data);
+		philo->nb_ate++;
+		usleep(philo->data->time_eat * 1000);
+		philo->time_ate = get_time();
+		
+		pthread_mutex_unlock(&philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
+		if (philo->data->nb_times_must_eat > 0 && philo->nb_ate == philo->data->nb_times_must_eat)
+			break;
+		// usleep(5 *1000);
+		pthread_mutex_lock(&philo->data->dead_m);
+		if (!philo->data->dead)
+		{
+			pthread_mutex_unlock(&philo->data->dead_m);
+			print_msg(timer(philo->data), philo->id, "is sleeping", philo->data);
+			usleep(philo->data->time_sleep * 1000);
+			print_msg(timer(philo->data), philo->id, "is thinking", philo->data);
+		}
+		pthread_mutex_unlock(&philo->data->dead_m);
+	}
 
 	return (NULL);
 }
@@ -53,17 +92,20 @@ int		philo(t_data *data)
 
 	i = 0;
     gettimeofday(&data->timer_start, NULL);
+	pthread_mutex_init(&data->msg, NULL);
+	pthread_mutex_init(&data->dead_m, NULL);
+
 	while (i < data->nb_philo)
 	{
-		pthread_mutex_init(&data->philo[i].left_fork, NULL);
 		if (i == data->nb_philo - 1)
 			data->philo[i].right_fork = &data->philo[0].left_fork;
 		else
 			data->philo[i].right_fork = &data->philo[i + 1].left_fork;
 		data->philo[i].id = i + 1;
 		data->philo[i].data = data;
-		data->philo[i].ate = get_time();
-		printf("ateeee = %ld\n", data->philo[i].ate);
+		data->philo[i].time_ate = get_time();
+		data->philo[i].nb_ate = 0;
+		pthread_mutex_init(&data->philo[i].left_fork, NULL);
 		i++;
 	}
 	i = 0;
@@ -81,7 +123,7 @@ int		philo(t_data *data)
 	{
 		if (pthread_join(data->philo[i].thread_id, NULL) != 0)
 			return(EXIT_FAILURE);
-		printf("%ld %d is thinking\n", timer(data), i + 1);
+		// printf("%ld %d is thinking\n", timer(data), i + 1);
 		// printf("thread[%d] = %ld\n", data->philo[i].id, data->philo[i].thread_id);
 		i++;
 	}

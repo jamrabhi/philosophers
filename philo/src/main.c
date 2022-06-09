@@ -28,11 +28,10 @@ int	main(int argc, char *argv[])
 	data.philo = malloc(sizeof(t_philo) * data.nb_philo);
 	printf("DATA :\ndata.nb_philo = %d\ndata.time_die = %d\n", data.nb_philo,
 		data.time_die);
-	printf("data.time_eat = %d\ndata.time_sleep = %d\n-------\n", data.time_eat,
-		data.time_sleep);
+	printf("data.time_eat = %d\ndata.time_sleep = %d\ndata.must_eat = %d\n-------\n", data.time_eat,
+		data.time_sleep, data.nb_times_must_eat);
 	if (philo(&data) == EXIT_FAILURE)
 		return (exit_fail("Error : Mutex failed"));
-	printf("ate = %ld\n", data.philo[0].ate);
 	free(data.philo);
 	return (0);
 }
