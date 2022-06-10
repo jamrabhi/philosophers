@@ -20,17 +20,16 @@ int	main(int argc, char *argv[])
 	if (argc != 5 && argc != 6)
 	{
 		printf("Usage : ./philo number_of_philosophers time_to_die time_to_eat "
-		"time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
+			"time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
 		return (1);
 	}
-	if (parsing(argv, &data) == EXIT_FAILURE)
-		return(exit_fail("Error : Arguments are not formatted correctly"));
+	if (parsing(argv, &data) == EXIT_FAILURE || data.time_die == 0
+		|| data.time_eat == 0 || data.time_sleep == 0 || data.nb_philo == 0)
+		return (exit_fail("Error : Arguments are not formatted correctly"));
 	data.philo = malloc(sizeof(t_philo) * data.nb_philo);
-	printf("DATA :\ndata.nb_philo = %d\ndata.time_die = %d\n", data.nb_philo,
-		data.time_die);
-	printf("data.time_eat = %d\ndata.time_sleep = %d\ndata.must_eat = %d\n-------\n", data.time_eat,
-		data.time_sleep, data.nb_times_must_eat);
-	if (philo(&data) == EXIT_FAILURE)
+	if (data.nb_philo == 1)
+		case_one(&data);
+	else if (philo(&data) == EXIT_FAILURE)
 		return (exit_fail("Error : Mutex failed"));
 	free(data.philo);
 	return (0);

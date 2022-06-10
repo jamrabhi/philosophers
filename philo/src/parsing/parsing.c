@@ -22,10 +22,10 @@ int	check_int_max(char *argv[])
 	{
 		nb = ft_atol(argv[i]);
 		if (nb > INT_MAX)
-			return(EXIT_FAILURE);
+			return (EXIT_FAILURE);
 		i++;
 	}
-	return(EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }
 
 int	args_are_digit(char *argv[])
@@ -50,8 +50,8 @@ int	args_are_digit(char *argv[])
 
 int	parsing(char *argv[], t_data *data)
 {
-	if (args_are_digit(argv) == EXIT_FAILURE || check_int_max(argv) == 
-		EXIT_FAILURE)
+	if (args_are_digit(argv) == EXIT_FAILURE || check_int_max(argv)
+		== EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	data->nb_philo = ft_atoi(argv[1]);
 	data->time_die = ft_atoi(argv[2]);
@@ -60,6 +60,8 @@ int	parsing(char *argv[], t_data *data)
 	if (argv[5])
 	{
 		data->nb_times_must_eat = ft_atoi(argv[5]);
+		if (data->nb_times_must_eat == 0)
+			return (EXIT_FAILURE);
 	}
 	if (!data->nb_times_must_eat)
 		data->nb_times_must_eat = -1;

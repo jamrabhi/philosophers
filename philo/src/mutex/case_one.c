@@ -1,27 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcmp.c                                        :+:      :+:    :+:   */
+/*   case_one.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jamrabhi <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/09/28 00:16:29 by jamrabhi          #+#    #+#             */
-/*   Updated: 2021/09/28 00:16:37 by jamrabhi         ###   ########.fr       */
+/*   Created: 2022/06/10 12:12:03 by jamrabhi          #+#    #+#             */
+/*   Updated: 2022/06/10 12:12:07 by jamrabhi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include <philo.h>
 
-int	ft_strcmp(const char *s1, const char *s2)
+void	case_one(t_data *data)
 {
-	size_t	i;
-
-	i = 0;
-	while ((s1[i] || s2[i]))
-	{
-		if ((unsigned char)s1[i] != (unsigned char)s2[i])
-			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-		i++;
-	}
-	return (0);
+	printf("0 1 has taken a fork\n");
+	printf("%d 1 died\n", data->time_die);
 }

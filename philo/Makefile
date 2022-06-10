@@ -14,12 +14,13 @@ NAME = philo
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror -pthread -g
+CFLAGS = -Wall -Wextra -Werror -pthread
 
 SRC = src/main.c \
 		src/parsing/parsing.c \
 		src/utils/exit.c src/utils/ft_atoi.c src/utils/ft_atol.c \
-		src/mutex/mutex.c src/utils/timer.c src/utils/ft_strcmp.c
+		src/mutex/mutex.c src/utils/timer.c src/mutex/case_one.c \
+		src/mutex/mutex_utils.c
 
 OBJ = $(SRC:.c=.o)
 

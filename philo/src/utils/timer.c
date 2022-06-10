@@ -12,7 +12,6 @@
 
 #include <philo.h>
 
-
 long	get_time(void)
 {
 	struct timeval	start_time;
@@ -29,7 +28,7 @@ void	ft_usleep(long time_ms)
 
 	start = get_time();
 	while ((get_time() - start) < time_ms)
-		usleep(10);
+		usleep(500);
 }
 
 long	timer(t_philo *philo)
