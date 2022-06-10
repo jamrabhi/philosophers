@@ -27,11 +27,14 @@ typedef struct s_philo
 {
 	int				id;
 	long			time_ate;
+	struct timeval	timer_start;
 	int				nb_ate;
+	int				stop;
+	long			time_start;
 	pthread_t		thread_id;
-	pthread_t		check_death;
 	pthread_mutex_t	left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	msg;
 	struct s_data	*data;
 }				t_philo;
 
@@ -43,17 +46,15 @@ typedef struct s_data
 	int				time_sleep;
 	int				nb_times_must_eat;
 	struct timeval	timer_start;
-	int				dead;
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	dead_m;
-	pthread_mutex_t	msg;
+	// int				dead;
+	pthread_t		monitor_th;
 	t_philo			*philo;
 }				t_data;
 
 
 int		exit_fail(char *str);
 int		parsing(char *argv[], t_data *data);
-long	timer(t_data *data);
+long	timer(t_philo *philo);
 void	ft_usleep(long time_ms);
 long	get_time(void);
 int		ft_strcmp(const char *s1, const char *s2);

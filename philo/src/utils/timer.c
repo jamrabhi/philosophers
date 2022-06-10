@@ -32,14 +32,14 @@ void	ft_usleep(long time_ms)
 		usleep(10);
 }
 
-long	timer(t_data *data)
+long	timer(t_philo *philo)
 {
 	struct timeval	end_timer;
 	long			time;
 
 	gettimeofday(&end_timer, NULL);
 	time = 0;
-	time = (end_timer.tv_sec - data->timer_start.tv_sec) * 1000;
-	time += (end_timer.tv_usec - data->timer_start.tv_usec) / 1000;
+	time = (end_timer.tv_sec - philo->timer_start.tv_sec) * 1000;
+	time += (end_timer.tv_usec - philo->timer_start.tv_usec) / 1000;
 	return (time);
 }
