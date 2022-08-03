@@ -59,11 +59,11 @@ int	parsing(char *argv[], t_data *data)
 	data->time_sleep = ft_atoi(argv[4]);
 	if (argv[5])
 	{
-		data->nb_times_must_eat = ft_atoi(argv[5]);
-		if (data->nb_times_must_eat == 0)
+		data->must_eat = ft_atoi(argv[5]);
+		if (data->must_eat == 0)
 			return (EXIT_FAILURE);
 	}
-	if (!data->nb_times_must_eat)
-		data->nb_times_must_eat = -1;
+	if (!data->must_eat)
+		data->must_eat = -1;
 	return (EXIT_SUCCESS);
 }

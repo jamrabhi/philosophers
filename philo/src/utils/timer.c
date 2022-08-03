@@ -38,7 +38,7 @@ long	timer(t_philo *philo)
 
 	gettimeofday(&end_timer, NULL);
 	time = 0;
-	time = (end_timer.tv_sec - philo->timer_start.tv_sec) * 1000;
-	time += (end_timer.tv_usec - philo->timer_start.tv_usec) / 1000;
+	time = (end_timer.tv_sec - philo->data->timer_start.tv_sec) * 1000;
+	time += (end_timer.tv_usec - philo->data->timer_start.tv_usec) / 1000;
 	return (time);
 }

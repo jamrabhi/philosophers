@@ -14,6 +14,6 @@
 
 int	exit_fail(char *str)
 {
-	printf("%s\n", str);
+	printf("Error : %s\n", str);
 	return (EXIT_FAILURE);
 }

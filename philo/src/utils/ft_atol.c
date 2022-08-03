@@ -29,7 +29,7 @@ long	ft_atol(const char *str)
 			testneg = 1;
 		i++;
 	}
-	while (str[i] && (str[i] >= '0' && str[i] <= '9'))
+	while (str[i] && (str[i] >= '0' && str[i] <= '9') && rt < INT_MAX)
 	{
 		rt = ((rt * 10) + str[i]) - '0';
 		i++;

@@ -12,36 +12,27 @@
 
 #include <philo.h>
 
-void	print_msg(long ms, int philo_id, char *str, t_philo *philo)
+int	check_alive(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->msg);
-	printf("%ld %d %s\n", ms, philo_id, str);
-	pthread_mutex_unlock(&philo->msg);
-}
+	long	time_since_last_meal;
 
-void	destroy_mutex(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->nb_philo)
+	pthread_mutex_lock(&philo->data->check_alive_lock);
+	time_since_last_meal = get_time() - philo->last_time_ate;
+	if (time_since_last_meal > philo->data->time_die
+		|| philo->data->dead_body == 1
+		|| philo->nb_meals == philo->data->must_eat)
 	{
-		pthread_mutex_destroy(&data->philo[i].left_fork);
-		pthread_mutex_destroy(&data->philo[i].msg);
-		i++;
+		if (philo->data->dead_body == 0
+			&& philo->nb_meals != philo->data->must_eat)
+		{
+			pthread_mutex_lock(&philo->data->print_lock);
+			printf("%ld %d died\n", timer(philo), philo->id);
+			pthread_mutex_unlock(&philo->data->print_lock);
+		}
+		philo->data->dead_body = 1;
+		pthread_mutex_unlock(&philo->data->check_alive_lock);
+		return (EXIT_FAILURE);
 	}
-}
-
-void	philo_dead(t_data *data, t_philo *philo)
-{
-	int	i;
-
-	i = 0;
-	pthread_mutex_lock(&philo->msg);
-	printf("%ld %d died\n", get_time() - philo->time_start, philo->id);
-	while (i < data->nb_philo)
-	{
-		data->philo[i].stop = 1;
-		i++;
-	}
+	pthread_mutex_unlock(&philo->data->check_alive_lock);
+	return (EXIT_SUCCESS);
 }
