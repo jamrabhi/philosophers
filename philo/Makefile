@@ -18,9 +18,10 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 
 SRC = src/main.c \
 		src/parsing/parsing.c \
-		src/utils/exit.c src/utils/ft_atoi.c src/utils/ft_atol.c \
-		src/mutex/mutex.c src/utils/timer.c src/mutex/case_one.c \
-		src/mutex/mutex_utils.c
+		src/utils/exit_fail.c src/utils/ft_atoi.c src/utils/ft_atol.c \
+		src/philosophers/philo.c src/philosophers/case_one.c src/utils/timer.c \
+		src/philosophers/mutex_utils.c src/philosophers/activity.c \
+		src/philosophers/check_alive.c
 
 OBJ = $(SRC:.c=.o)
 

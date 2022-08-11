@@ -28,7 +28,7 @@ void	ft_usleep(long time_ms)
 
 	start = get_time();
 	while ((get_time() - start) < time_ms)
-		usleep(500);
+		usleep(10);
 }
 
 long	timer(t_philo *philo)

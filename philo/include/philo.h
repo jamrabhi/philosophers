@@ -50,18 +50,25 @@ typedef struct s_data
 }				t_data;
 
 int		parsing(char *argv[], t_data *data);
-long	ft_atol(const char *str);
 int		ft_atoi(const char *str);
-
-void	print_msg(long ms, t_philo *philo, char *str);
+long	ft_atol(const char *str);
 int		exit_fail(char *str);
-
-int		philo(t_data *data);
-void	case_one(t_data *data);
-int		check_alive(t_philo *philo);
 
 long	timer(t_philo *philo);
 long	get_time(void);
 void	ft_usleep(long time_ms);
+
+int		philo(t_data *data);
+void	case_one(t_data *data);
+
+int		check_alive(t_philo *philo);
+
+void	eat_philo(t_philo *philo);
+void	sleep_philo(t_philo *philo);
+void	think_philo(t_philo *philo);
+
+void	lock_forks(t_philo *philo);
+void	unlock_forks(t_philo *philo);
+void	destroy_mutex(t_data *data);
 
 #endif
