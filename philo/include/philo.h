@@ -43,7 +43,7 @@ typedef struct s_data
 	int				time_sleep;
 	int				must_eat;
 	int				dead_body;
-	struct timeval	timer_start;
+	long			timer_start;
 	pthread_mutex_t	print_lock;
 	pthread_mutex_t	check_alive_lock;
 	t_philo			*philo;
@@ -69,6 +69,6 @@ void	think_philo(t_philo *philo);
 
 void	lock_forks(t_philo *philo);
 void	unlock_forks(t_philo *philo);
-void	destroy_mutex(t_data *data);
+int		destroy_mutex(t_data *data);
 
 #endif

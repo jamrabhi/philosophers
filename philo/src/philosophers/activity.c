@@ -39,7 +39,9 @@ void	sleep_philo(t_philo *philo)
 		pthread_mutex_lock(&philo->data->print_lock);
 		printf("%ld %d is sleeping\n", timer(philo), philo->id);
 		pthread_mutex_unlock(&philo->data->print_lock);
-		if (philo->data->time_eat * 2 >= philo->data->time_die) // changt avant c'tetait hors if
+		if (philo->data->time_eat * 2 >= philo->data->time_die
+			|| philo->data->time_eat + philo->data->time_sleep
+			>= philo->data->time_die)
 			sleep_time = (philo->data->time_die - philo->data->time_eat + 1);
 		ft_usleep(sleep_time);
 	}

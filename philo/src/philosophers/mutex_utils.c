@@ -40,16 +40,20 @@ void	unlock_forks(t_philo *philo)
 	}
 }
 
-void	destroy_mutex(t_data *data)
+int	destroy_mutex(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&data->print_lock);
-	pthread_mutex_destroy(&data->check_alive_lock);
+	if (pthread_mutex_destroy(&data->print_lock) != 0)
+		return (EXIT_FAILURE);
+	if (pthread_mutex_destroy(&data->check_alive_lock) != 0)
+		return (EXIT_FAILURE);
 	while (i < data->nb_philo)
 	{
-		pthread_mutex_destroy(&data->philo[i].left_fork);
+		if (pthread_mutex_destroy(&data->philo[i].left_fork) != 0)
+			return (EXIT_FAILURE);
 		i++;
 	}
+	return (EXIT_SUCCESS);
 }

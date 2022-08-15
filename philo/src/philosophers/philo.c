@@ -28,23 +28,26 @@ void	*routine_philo(void *philo_struct)
 	return (NULL);
 }
 
-void	run_philo(t_data *data)
+int	run_philo(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (i < data->nb_philo)
 	{
-		pthread_create(&data->philo[i].thread, NULL, routine_philo,
-			&data->philo[i]);
+		if (pthread_create(&data->philo[i].thread, NULL, routine_philo,
+				&data->philo[i]) != 0)
+			return (EXIT_FAILURE);
 		i++;
 	}
 	i = 0;
 	while (i < data->nb_philo)
 	{
-		pthread_join(data->philo[i].thread, NULL);
+		if (pthread_join(data->philo[i].thread, NULL) != 0)
+			return (EXIT_FAILURE);
 		i++;
 	}
+	return (EXIT_SUCCESS);
 }
 
 int	init_philo(t_data *data)
@@ -53,7 +56,9 @@ int	init_philo(t_data *data)
 
 	i = 0;
 	data->philo = malloc(sizeof(t_philo) * data->nb_philo);
-	gettimeofday(&data->timer_start, NULL);
+	if (!data->philo)
+		return (EXIT_FAILURE);
+	data->timer_start = get_time();
 	if (pthread_mutex_init(&data->print_lock, NULL) != 0
 		|| pthread_mutex_init(&data->check_alive_lock, NULL) != 0)
 		return (EXIT_FAILURE);
@@ -76,8 +81,10 @@ int	philo(t_data *data)
 {
 	if (init_philo(data) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	run_philo(data);
-	destroy_mutex(data);
+	if (run_philo(data) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	if (destroy_mutex(data) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	free(data->philo);
 	return (EXIT_SUCCESS);
 }

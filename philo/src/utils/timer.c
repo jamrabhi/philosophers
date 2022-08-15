@@ -22,6 +22,11 @@ long	get_time(void)
 	return (rt);
 }
 
+long	timer(t_philo *philo)
+{
+	return (get_time() - philo->data->timer_start);
+}
+
 void	ft_usleep(long time_ms)
 {
 	long	start;
@@ -29,16 +34,4 @@ void	ft_usleep(long time_ms)
 	start = get_time();
 	while ((get_time() - start) < time_ms)
 		usleep(10);
-}
-
-long	timer(t_philo *philo)
-{
-	struct timeval	end_timer;
-	long			time;
-
-	gettimeofday(&end_timer, NULL);
-	time = 0;
-	time = (end_timer.tv_sec - philo->data->timer_start.tv_sec) * 1000;
-	time += (end_timer.tv_usec - philo->data->timer_start.tv_usec) / 1000;
-	return (time);
 }

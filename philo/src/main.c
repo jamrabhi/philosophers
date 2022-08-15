@@ -27,9 +27,11 @@ int	main(int argc, char *argv[])
 	if (parsing(argv, &data) == EXIT_FAILURE || data.time_die == 0
 		|| data.time_eat == 0 || data.time_sleep == 0 || data.nb_philo == 0)
 		return (exit_fail("Arguments are not formatted correctly"));
+	if (data.nb_philo > 200)
+		return (exit_fail("Cannot handle more than 200 philos"));
 	if (data.nb_philo == 1)
 		case_one(&data);
 	else if (philo(&data) == EXIT_FAILURE)
-		return (exit_fail("Mutex failed"));
+		return (exit_fail("Something went wrong"));
 	return (0);
 }
