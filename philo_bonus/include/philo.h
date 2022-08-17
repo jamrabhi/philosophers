@@ -22,31 +22,38 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <sys/time.h>
+# include <sys/types.h>
+# include <signal.h>
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include <semaphore.h>
 
 typedef struct s_philo
 {
 	int				id;
 	int				nb_meals;
-	pthread_mutex_t	left_fork;
-	pthread_mutex_t	*right_fork;
-	pthread_t		thread;
-	struct s_data	*data;
 	long			last_time_ate;
+	struct s_data	*data;
+	pid_t			process;
+	int				wait_status;
 
 }				t_philo;
 
 typedef struct s_data
 {
-	int				nb_philo;
-	int				time_die;
-	int				time_eat;
-	int				time_sleep;
-	int				must_eat;
-	int				dead_body;
-	long			timer_start;
-	pthread_mutex_t	print_lock;
-	pthread_mutex_t	check_alive_lock;
-	t_philo			*philo;
+	int		nb_philo;
+	int		time_die;
+	int		time_eat;
+	int		time_sleep;
+	int		must_eat;
+	int		dead_body;
+	long	timer_start;
+	sem_t	*print_lock;
+	sem_t	*check_alive_lock;
+	sem_t	*fork;
+	sem_t	*take_forks;
+	t_philo	*philo;
 }				t_data;
 
 int		parsing(char *argv[], t_data *data);
@@ -61,14 +68,14 @@ void	ft_usleep(long time_ms);
 int		philo(t_data *data);
 void	case_one(t_data *data);
 
-// int		check_alive(t_philo *philo);
+int		check_alive(t_philo *philo);
 
-// void	eat_philo(t_philo *philo);
-// void	sleep_philo(t_philo *philo);
-// void	think_philo(t_philo *philo);
+int		eat_philo(t_philo *philo);
+int		sleep_philo(t_philo *philo);
+int		think_philo(t_philo *philo);
 
-// void	lock_forks(t_philo *philo);
-// void	unlock_forks(t_philo *philo);
+void	lock_forks(t_philo *philo);
+void	unlock_forks(t_philo *philo);
 // int		destroy_mutex(t_data *data);
 
 #endif

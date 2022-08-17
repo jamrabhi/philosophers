@@ -12,42 +12,50 @@
 
 #include <philo.h>
 
-void	*routine_philo(void *philo_struct)
-{
-	t_philo	*philo;
+// void	*routine_philo(void *philo_struct)
+// {
+// 	t_philo	*philo;
 
-	philo = philo_struct;
-	if (philo->id % 2 == 0)
-		ft_usleep(philo->data->time_eat);
+// 	philo = philo_struct;
+// 	if (philo->id % 2 == 0)
+// 		ft_usleep(philo->data->time_eat);
+// 	while (check_alive(philo) == EXIT_SUCCESS)
+// 	{
+// 		eat_philo(philo);
+// 		sleep_philo(philo);
+// 		think_philo(philo);
+// 	}
+// 	return (NULL);
+// }
+
+void	run_philo(t_philo *philo)
+{
+		if (philo->id == 1)
+		{
+			philo->data->dead_body = 1;
+		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
+
+		}
 	while (check_alive(philo) == EXIT_SUCCESS)
 	{
-		eat_philo(philo);
-		sleep_philo(philo);
-		think_philo(philo);
+		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
+		if (eat_philo(philo) == EXIT_FAILURE)
+		{
+		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
+			exit(EXIT_FAILURE);
+		}
+		if (sleep_philo(philo) == EXIT_FAILURE)
+		{
+		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
+			exit(EXIT_FAILURE);
+		}
+		if (think_philo(philo) == EXIT_FAILURE)
+		{
+		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
+			exit(EXIT_FAILURE);
+		}
 	}
-	return (NULL);
-}
-
-int	run_philo(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->nb_philo)
-	{
-		if (pthread_create(&data->philo[i].thread, NULL, routine_philo,
-				&data->philo[i]) != 0)
-			return (EXIT_FAILURE);
-		i++;
-	}
-	i = 0;
-	while (i < data->nb_philo)
-	{
-		if (pthread_join(data->philo[i].thread, NULL) != 0)
-			return (EXIT_FAILURE);
-		i++;
-	}
-	return (EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 int	init_philo(t_data *data)
@@ -55,36 +63,54 @@ int	init_philo(t_data *data)
 	int	i;
 
 	i = 0;
+	sem_unlink("/print_lock");
+	sem_unlink("/check_alive_lock");
+	sem_unlink("/fork");
+	sem_unlink("/take_forks");
 	data->philo = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo)
 		return (EXIT_FAILURE);
 	data->timer_start = get_time();
-	if (pthread_mutex_init(&data->print_lock, NULL) != 0
-		|| pthread_mutex_init(&data->check_alive_lock, NULL) != 0)
+	data->print_lock = sem_open("/print_lock", O_CREAT, 0644, 1);
+	data->check_alive_lock = sem_open("/check_alive_lock", O_CREAT, 0644, 1);
+	data->fork = sem_open("/fork", O_CREAT, 0644, data->nb_philo);
+	data->take_forks = sem_open("/take_forks", O_CREAT, 0644, 2);
+	if (data->print_lock == SEM_FAILED || data->check_alive_lock == SEM_FAILED
+		|| data->fork == SEM_FAILED || data->take_forks == SEM_FAILED)
 		return (EXIT_FAILURE);
 	while (i < data->nb_philo)
 	{
-		if (pthread_mutex_init(&data->philo[i].left_fork, NULL) != 0)
-			return (EXIT_FAILURE);
-		data->philo[i].right_fork = &data->philo[(i + 1) % data->nb_philo]
-			.left_fork;
 		data->philo[i].id = i + 1;
 		data->philo[i].data = data;
 		data->philo[i].last_time_ate = get_time();
 		data->philo[i].nb_meals = 0;
+		data->philo[i].process = fork();
+		if (data->philo[i].process == -1)
+			return (EXIT_FAILURE);
+		if (data->philo[i].process == 0)
+			run_philo(&data->philo[i]);
 		i++;
 	}
-	return (EXIT_SUCCESS);
+	i = 0;
+	while (i < data->nb_philo)
+	{
+		waitpid(data->philo[i].process, &data->philo[i].wait_status, 0);
+		i++;
+	}
+	if (sem_unlink("/print_lock") != 0 || sem_unlink("/check_alive_lock") != 0
+		|| sem_unlink("/fork") != 0 || sem_unlink("take_forks") != 0)
+		return (EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }
 
 int	philo(t_data *data)
 {
 	if (init_philo(data) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	if (run_philo(data) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	if (destroy_mutex(data) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+	// if (run_philo(data) == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
+	// if (destroy_mutex(data) == EXIT_FAILURE)
+	// 	return (EXIT_FAILURE);
 	free(data->philo);
 	return (EXIT_SUCCESS);
 }
