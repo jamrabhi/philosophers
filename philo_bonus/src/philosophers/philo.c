@@ -30,30 +30,14 @@
 
 void	run_philo(t_philo *philo)
 {
-		if (philo->id == 1)
-		{
-			philo->data->dead_body = 1;
-		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
-
-		}
 	while (check_alive(philo) == EXIT_SUCCESS)
 	{
-		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
 		if (eat_philo(philo) == EXIT_FAILURE)
-		{
-		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
 			exit(EXIT_FAILURE);
-		}
 		if (sleep_philo(philo) == EXIT_FAILURE)
-		{
-		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
 			exit(EXIT_FAILURE);
-		}
 		if (think_philo(philo) == EXIT_FAILURE)
-		{
-		printf("#%d data.dead_body = %d\n", philo->id, philo->data->dead_body);
 			exit(EXIT_FAILURE);
-		}
 	}
 	exit(EXIT_SUCCESS);
 }
@@ -61,6 +45,7 @@ void	run_philo(t_philo *philo)
 int	init_philo(t_data *data)
 {
 	int	i;
+	int	status_pid;
 
 	i = 0;
 	sem_unlink("/print_lock");
@@ -92,14 +77,23 @@ int	init_philo(t_data *data)
 		i++;
 	}
 	i = 0;
-	while (i < data->nb_philo)
+	// while (i < data->nb_philo)
+	// {
+	// 	i++;
+	// }
+	waitpid(-1, &status_pid, 0);
+	if (WIFEXITED(status_pid))
 	{
-		waitpid(data->philo[i].process, &data->philo[i].wait_status, 0);
-		i++;
+		while (i < data->nb_philo)
+		{
+			kill(data->philo[i].process, SIGTERM);
+			i++;
+		}
+		if (sem_unlink("/print_lock") != 0 || sem_unlink("/check_alive_lock") != 0
+			|| sem_unlink("/fork") != 0 || sem_unlink("take_forks") != 0)
+			return (EXIT_FAILURE);
+		exit(EXIT_SUCCESS);
 	}
-	if (sem_unlink("/print_lock") != 0 || sem_unlink("/check_alive_lock") != 0
-		|| sem_unlink("/fork") != 0 || sem_unlink("take_forks") != 0)
-		return (EXIT_FAILURE);
 	exit(EXIT_SUCCESS);
 }
 

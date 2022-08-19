@@ -12,10 +12,10 @@
 
 #include <philo.h>
 
-int	eat_philo(t_philo *philo, t_data *data)
+int	eat_philo(t_philo *philo)
 {
 	lock_forks(philo);
-	if (check_alive(philo, data) == EXIT_SUCCESS)
+	if (check_alive(philo) == EXIT_SUCCESS)
 	{
 		sem_wait(philo->data->print_lock);
 		printf("%ld %d is eating\n", timer(philo), philo->id);
@@ -33,12 +33,12 @@ int	eat_philo(t_philo *philo, t_data *data)
 	}
 }
 
-int	sleep_philo(t_philo *philo, t_data *data)
+int	sleep_philo(t_philo *philo)
 {
 	int		sleep_time;
 
 	sleep_time = philo->data->time_sleep;
-	if (check_alive(philo, data) == EXIT_SUCCESS)
+	if (check_alive(philo) == EXIT_SUCCESS)
 	{
 		sem_wait(philo->data->print_lock);
 		printf("%ld %d is sleeping\n", timer(philo), philo->id);
@@ -54,9 +54,9 @@ int	sleep_philo(t_philo *philo, t_data *data)
 		return (EXIT_FAILURE);
 }
 
-int	think_philo(t_philo *philo, t_data *data)
+int	think_philo(t_philo *philo)
 {
-	if (check_alive(philo, data) == EXIT_SUCCESS)
+	if (check_alive(philo) == EXIT_SUCCESS)
 	{
 		sem_wait(philo->data->print_lock);
 		printf("%ld %d is thinking\n", timer(philo), philo->id);
